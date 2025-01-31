@@ -1,3 +1,4 @@
+<?php include('./views/layout/header.php'); ?>
 <!-- views/cars/index.php -->
 <div class="container">
     <h1 class="page-title">Nos Véhicules Premium</h1>
@@ -7,6 +8,7 @@
                 <img src="<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['brand'] . ' ' . $row['model']); ?>" class="car-image">
                 <div class="car-content">
                     <h2 class="car-title"><?php echo htmlspecialchars($row['brand'] . ' ' . $row['model']); ?></h2>
+                    <br>
                     <div class="car-info">
                         <div class="info-item">
                             <i class="fas fa-calendar"></i>
@@ -32,3 +34,5 @@
         <?php } ?>
     </div>
 </div>
+
+<?php include('./views/layout/footer.php'); ?>

@@ -1,3 +1,5 @@
+
+<?php include('./views/layout/header.php'); ?>
 <!-- views/cars/show.php -->
 <div class="container">
     <div class="car-detail">
@@ -44,4 +46,5 @@
     </div>
 </div>
 </body>
+<?php include('./views/layout/footer.php'); ?>
 </html>

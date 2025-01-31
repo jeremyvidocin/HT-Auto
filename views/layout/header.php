@@ -157,7 +157,7 @@
 
         .car-detail-image {
             width: 100%;
-            max-height: 500px;
+            max-height: 800px;
             object-fit: cover;
             border-radius: 10px;
             margin-bottom: 2rem;
