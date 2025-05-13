@@ -43,6 +43,45 @@
             <h2>Description</h2>
             <p><?php echo nl2br(htmlspecialchars($car['description'])); ?></p>
         </div>
+
+        <div class="car-actions">
+    <?php if (isset($_SESSION['user_id'])): ?>
+        <a href="index.php?action=test_drive&car_id=<?php echo $car['id']; ?>" class="btn-test-drive">
+            <i class="fas fa-car"></i> Réserver un essai
+        </a>
+    <?php else: ?>
+        <a href="index.php?action=login&redirect=test_drive&car_id=<?php echo $car['id']; ?>" class="btn-test-drive">
+            Connectez-vous pour réserver un essai
+        </a>
+    <?php endif; ?>
+</div>
+
+<style>
+.car-actions {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.btn-test-drive {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: var(--gradient-primary);
+    color: white;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: var(--shadow-primary);
+}
+
+.btn-test-drive:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-secondary);
+}
+</style>
+
+
+
     </div>
 </div>
 </body>
