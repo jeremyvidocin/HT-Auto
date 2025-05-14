@@ -6,6 +6,9 @@
 **HT-Auto** est un projet développé principalement en **PHP** avec un peu de **CSS**. Ce guide vous aidera à configurer le projet localement en utilisant **XAMPP** pour gérer le serveur web et la base de données.
 
 ---
+## Identifiants admin
+admin@gmail.com
+admin971
 
 ## Prérequis
 
