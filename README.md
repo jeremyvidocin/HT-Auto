@@ -1,4 +1,3 @@
-Voici un fichier README en français pour votre projet, qui inclut des instructions pour le configurer avec XAMPP pour la base de données :
 
 ---
 
@@ -29,41 +28,88 @@ git clone https://github.com/jeremyvidocin/HT-Auto.git
 cd HT-Auto
 ```
 
+---
+
 ### 2. Installer et Lancer XAMPP
 
 1. Téléchargez et installez **XAMPP** depuis [le site officiel](https://www.apachefriends.org/fr/index.html).
 2. Lancez le **Panneau de contrôle XAMPP**.
 3. Démarrez les services **Apache** et **MySQL**.
 
+---
+
 ### 3. Configurer la Base de Données
 
-1. Ouvrez **phpMyAdmin** en accédant à `http://localhost/phpmyadmin` dans un navigateur.
-2. Créez une nouvelle base de données nommée par exemple `ht_auto`.
+1. **Accéder à phpMyAdmin** :
+   - Ouvrez votre navigateur et accédez à `http://localhost/phpmyadmin`.
 
-3. Importez le fichier SQL (s'il existe dans le projet) :
-   - Dans **phpMyAdmin**, sélectionnez la base de données `ht_auto`.
-   - Cliquez sur l'onglet **Importer**.
-   - Choisissez le fichier SQL fourni dans le projet (par exemple, `database.sql` ou autre fichier similaire).
-   - Cliquez sur **Exécuter**.
+2. **Créer une Base de Données** :
+   - Cliquez sur l'onglet **Bases de données**.
+   - Entrez le nom de votre base de données, par exemple `ht_auto`, et cliquez sur **Créer**.
 
-### 4. Configurer le Projet
+3. **Importer les Tables** :
+   - Si le projet contient un fichier SQL (comme `database.sql`), suivez ces étapes :
+     1. Sélectionnez la base de données `ht_auto`.
+     2. Cliquez sur l'onglet **Importer**.
+     3. Cliquez sur **Choisir un fichier**, sélectionnez le fichier SQL fourni dans le projet, puis cliquez sur **Exécuter**.
 
-Si un fichier de configuration (comme `config.php`) est présent dans le projet, mettez-le à jour avec vos informations locales. Exemple :
+4. **Structure Exemple de la Base de Données** *(si aucun fichier SQL n'est fourni)* :
+   - Si le fichier `database.sql` n'est pas disponible, créez manuellement les tables nécessaires via phpMyAdmin ou un script SQL. Voici un exemple de table `users` :
+
+```sql
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+---
+
+### 4. Configurer la Connexion à la Base de Données
+
+1. **Fichier de Configuration** :
+   - Vérifiez si un fichier `config.php` est présent dans le projet.
+   - Si ce fichier n'existe pas, créez-en un dans le répertoire principal du projet avec le contenu suivant :
 
 ```php
 <?php
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'ht_auto');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+// Configuration de la base de données
+define('DB_HOST', 'localhost'); // L'hôte de la base de données
+define('DB_NAME', 'ht_auto');   // Le nom de la base de données
+define('DB_USER', 'root');      // L'utilisateur de la base de données (par défaut "root" pour XAMPP)
+define('DB_PASS', '');          // Le mot de passe (par défaut vide pour XAMPP)
+
+try {
+    // Connexion à la base de données avec PDO
+    $pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Erreur de connexion à la base de données : " . $e->getMessage());
+}
 ?>
 ```
 
-Assurez-vous que :
-- `DB_HOST` est `localhost`.
-- `DB_NAME` correspond au nom de votre base de données (par exemple, `ht_auto`).
-- `DB_USER` est `root` (par défaut pour XAMPP).
-- `DB_PASS` est vide (par défaut pour XAMPP).
+2. **Vérification de la Connexion** :
+   - Ajoutez un fichier simple, par exemple `test_connection.php`, pour vérifier si la connexion fonctionne :
+
+```php
+<?php
+require 'config.php';
+
+if ($pdo) {
+    echo "Connexion réussie à la base de données !";
+} else {
+    echo "Échec de la connexion.";
+}
+?>
+```
+
+   - Placez ce fichier dans le répertoire principal du projet (dans `htdocs` si vous utilisez XAMPP).
+   - Accédez à ce fichier via un navigateur : `http://localhost/HT-Auto/test_connection.php`.
+
+---
 
 ### 5. Déplacer le Projet dans le Répertoire XAMPP
 
@@ -73,7 +119,7 @@ Déplacez le projet dans le répertoire `htdocs` de XAMPP. Par exemple :
 mv HT-Auto /path/to/xampp/htdocs/
 ```
 
-Accédez au projet via votre navigateur à l'adresse :  
+Accédez au projet via votre navigateur à l'adresse suivante :  
 `http://localhost/HT-Auto`
 
 ---
@@ -85,33 +131,15 @@ Accédez au projet via votre navigateur à l'adresse :
 
 ---
 
-## Développement
-
-Si vous souhaitez apporter des modifications ou contribuer au projet :
-
-1. Effectuez les modifications dans votre éditeur préféré.
-2. Testez les changements localement en rechargeant la page dans votre navigateur.
-3. Si tout fonctionne comme prévu, validez vos modifications avec Git :
-
-```bash
-git add .
-git commit -m "Votre message de commit"
-git push
-```
-
----
-
 ## Ressources Utiles
 
 - [Documentation officielle de XAMPP](https://www.apachefriends.org/fr/index.html)
-- [Documentation PHP](https://www.php.net/manual/fr/)
+- [Documentation PHP (PDO)](https://www.php.net/manual/fr/book.pdo.php)
 - [Documentation MySQL](https://dev.mysql.com/doc/)
 
----
 
 
 Si vous avez des questions ou des problèmes, n'hésitez pas à ouvrir une issue dans le dépôt GitHub.
 
---- 
+---
 
-Si vous avez besoin de détails supplémentaires ou de modifications, faites-le-moi savoir !
