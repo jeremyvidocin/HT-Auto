@@ -13,22 +13,22 @@
     
     <style>
         :root {
-    /* Palette de couleurs vibrantes et modernes */
-    --primary-color: #FF6B6B;     /* Rose corail vibrant */
-    --secondary-color: #FFD93D;   /* Orange jaune énergique */
-    --accent-color: #6BCB77;      /* Vert frais */
-    --dark-color: #4D4D4D;        /* Gris anthracite */
-    --light-color: #F7FFF7;       /* Blanc légèrement teinté */
-    --light-gray: #f5f5f5;        /* Gris clair pour fond */
+            /* Palette de couleurs vibrantes et modernes */
+            --primary-color: #FF6B6B;     /* Rose corail vibrant */
+            --secondary-color: #FFD93D;   /* Orange jaune énergique */
+            --accent-color: #6BCB77;      /* Vert frais */
+            --dark-color: #4D4D4D;        /* Gris anthracite */
+            --light-color: #F7FFF7;       /* Blanc légèrement teinté */
+            --light-gray: #f5f5f5;        /* Gris clair pour fond */
 
-    /* Dégradés dynamiques */
-    --gradient-primary: linear-gradient(135deg, #FF6B6B 0%, #FFD93D 100%);
-    --gradient-secondary: linear-gradient(135deg, #6BCB77 0%, #4ECDC4 100%);
+            /* Dégradés dynamiques */
+            --gradient-primary: linear-gradient(135deg, #FF6B6B 0%, #FFD93D 100%);
+            --gradient-secondary: linear-gradient(135deg, #6BCB77 0%, #4ECDC4 100%);
 
-    /* Ombres et effets */
-    --shadow-primary: 0 10px 20px rgba(255,107,107,0.3);
-    --shadow-secondary: 0 15px 30px rgba(255,217,61,0.3);
-}
+            /* Ombres et effets */
+            --shadow-primary: 0 10px 20px rgba(255,107,107,0.3);
+            --shadow-secondary: 0 15px 30px rgba(255,217,61,0.3);
+        }
 
         * {
             margin: 0;
@@ -399,44 +399,113 @@
             transform: translateY(-3px);
             box-shadow: var(--shadow-secondary);
         }
+
+        .admin-link {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .admin-link:hover {
+            background-color: var(--dark-color) !important;
+            color: white !important;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            background-color: transparent;
+            color: var(--primary-color);
+            padding: 0.5rem 1rem;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            z-index: 1;
+            border-radius: 5px;
+            margin-top: 0.5rem;
+        }
+
+        .dropdown-content a {
+            color: var(--dark-color);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--light-gray);
+            color: var(--primary-color);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <header class="header">
         <nav class="navbar">
             <a href="index.php" class="logo">
-                <i class="fas fa-car-side"></i>
+                <i class="fas fa-car"></i>
                 Premium Auto
             </a>
             <div class="nav-links">
-                <a href="index.php"><i class="fas fa-home"></i> Accueil</a>
-                <a href="index.php?action=cars"><i class="fas fa-car"></i> Nos Véhicules</a>
-                <a href="index.php?action=contact"><i class="fas fa-envelope"></i> Contact</a>
-                <div class="user-section">
-                    <?php if (isset($_SESSION['user_id'])): ?>
-                        <div class="user-menu">
-                            <span>
-                                <i class="fas fa-user-circle"></i>
-                                <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Utilisateur'); ?>
-                            </span>
-                            <div class="dropdown-menu">
-                                <a href="index.php?action=profile"><i class="fas fa-user"></i> Mon profil</a>
-                                <a href="index.php?action=my_bookings"><i class="fas fa-calendar-check"></i> Mes réservations</a>
-                                <a href="index.php?action=logout"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
-                            </div>
-                        </div>
-                    <?php else: ?>
-                        <div class="auth-links">
-                            <a href="index.php?action=login">Connexion</a>
-                            <a href="index.php?action=register">Inscription</a>
-                        </div>
+                <a href="index.php">Accueil</a>
+                <a href="index.php?action=cars">Véhicules</a>
+                <a href="index.php?action=contact">Contact</a>
+                <?php if(isset($_SESSION['user_id'])): ?>
+                    <?php 
+                    require_once('./models/User.php');
+                    $user = new User($GLOBALS['db']);
+                    $user->id = $_SESSION['user_id'];
+                    $userData = $user->readOne();
+                    if($userData && $userData['role'] === 'admin'): 
+                    ?>
+                        <a href="index.php?action=admin" class="admin-link">
+                            <i class="fas fa-user-shield"></i> Administration
+                        </a>
                     <?php endif; ?>
-                </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">
+                            <i class="fas fa-user"></i>
+                            <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Mon compte'); ?>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="index.php?action=profile">Mon profil</a>
+                            <a href="index.php?action=my_bookings">Mes réservations</a>
+                            <a href="index.php?action=logout">Déconnexion</a>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <div class="auth-links">
+                        <a href="index.php?action=login">Connexion</a>
+                        <a href="index.php?action=register">Inscription</a>
+                    </div>
+                <?php endif; ?>
             </div>
         </nav>
     </header>
 
-    <!-- Script pour l'effet d'ombre du header au scroll -->
     <script>
         window.addEventListener('scroll', function() {
             var header = document.querySelector('.header');
@@ -447,3 +516,5 @@
             }
         });
     </script>
+
+    <div class="container">

@@ -79,26 +79,6 @@
     </div>
 </section>
 
-<section class="home-testimonial container">
-    <h2>Nos Clients Témoignent</h2>
-    <div class="testimonial-grid">
-        <div class="testimonial-card">
-            <p>"Un service impeccable et des véhicules de haute qualité. Je recommande !"</p>
-            <div class="client-info">
-                <img src="/public/images/client1.jpg" alt="Client 1">
-                <span>Jean D.</span>
-            </div>
-        </div>
-        <div class="testimonial-card">
-            <p>"Professionnalisme et conseil. J'ai trouvé mon bonheur chez Premium Auto."</p>
-            <div class="client-info">
-                <img src="/public/images/client2.jpg" alt="Client 2">
-                <span>Marie S.</span>
-            </div>
-        </div>
-    </div>
-</section>
-
 <?php include('./views/layout/footer.php'); ?>
 
 <style>
@@ -117,18 +97,18 @@
         margin-bottom: 1rem;
     }
 
-    .home-stats, .home-services, .home-testimonial {
+    .home-stats, .home-services {
         padding: 4rem 0;
         text-align: center;
     }
 
-    .stats-grid, .services-grid, .testimonial-grid {
+    .stats-grid, .services-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 2rem;
     }
 
-    .stat-card, .service-card, .testimonial-card {
+    .stat-card, .service-card {
         background: var(--light-gray);
         padding: 2rem;
         border-radius: 10px;
@@ -139,12 +119,5 @@
         font-size: 3rem;
         color: var(--primary-color);
         margin-bottom: 1rem;
-    }
-
-    .testimonial-card img {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        object-fit: cover;
     }
 </style>

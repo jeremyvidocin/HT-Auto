@@ -13,7 +13,10 @@
         <div class="contact-form-container">
             <div class="form-card">
                 <h2>Envoyez-nous un message</h2>
-                <form action="index.php?action=contact&submit=true" method="POST" class="contact-form">
+                <form action="https://getform.io/f/bollnnma" method="POST" class="contact-form">
+                    <input type="hidden" name="_redirect" value="<?php echo 'http://' . $_SERVER['HTTP_HOST'] . '/index.php?action=contact&success=1'; ?>">
+                    <input type="hidden" name="_email.to" value="jeremyvidocin@gmail.com">
+                    
                     <div class="form-group">
                         <label for="name">Nom complet</label>
                         <input type="text" id="name" name="name" required class="form-input">
@@ -44,6 +47,12 @@
                         <label for="message">Message</label>
                         <textarea id="message" name="message" required class="form-input" rows="5"></textarea>
                     </div>
+
+                    <?php if (isset($_GET['success'])): ?>
+                    <div class="alert alert-success">
+                        Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.
+                    </div>
+                    <?php endif; ?>
                     
                     <button type="submit" class="btn-submit">Envoyer le message</button>
                 </form>
@@ -204,6 +213,18 @@
     .contact-grid {
         grid-template-columns: 1fr;
     }
+}
+
+.alert {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
 }
 </style>
 

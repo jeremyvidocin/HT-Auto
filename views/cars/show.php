@@ -1,4 +1,3 @@
-
 <?php include('./views/layout/header.php'); ?>
 <!-- views/cars/show.php -->
 <div class="container">
@@ -45,45 +44,76 @@
         </div>
 
         <div class="car-actions">
-    <?php if (isset($_SESSION['user_id'])): ?>
-        <a href="index.php?action=test_drive&car_id=<?php echo $car['id']; ?>" class="btn-test-drive">
-            <i class="fas fa-car"></i> Réserver un essai
-        </a>
-    <?php else: ?>
-        <a href="index.php?action=login&redirect=test_drive&car_id=<?php echo $car['id']; ?>" class="btn-test-drive">
-            Connectez-vous pour réserver un essai
-        </a>
-    <?php endif; ?>
-</div>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <a href="index.php?action=test_drive&car_id=<?php echo $car['id']; ?>" class="btn-action btn-test-drive">
+                    <i class="fas fa-car"></i> Réserver un essai
+                </a>
+                <a href="index.php?action=devis&car_id=<?php echo $car['id']; ?>" class="btn-action btn-devis">
+                    <i class="fas fa-file-invoice-dollar"></i> Obtenir un devis
+                </a>
+            <?php else: ?>
+                <div class="login-prompt">
+                    <p>Pour accéder à toutes les fonctionnalités :</p>
+                    <a href="index.php?action=login&redirect=test_drive&car_id=<?php echo $car['id']; ?>" class="btn-action btn-login">
+                        <i class="fas fa-sign-in-alt"></i> Connectez-vous
+                    </a>
+                </div>
+            <?php endif; ?>
+        </div>
 
-<style>
-.car-actions {
-    margin-top: 2rem;
-    text-align: center;
-}
+        <style>
+        .car-actions {
+            margin-top: 2rem;
+            text-align: center;
+        }
 
-.btn-test-drive {
-    display: inline-block;
-    padding: 1rem 2rem;
-    background: var(--gradient-primary);
-    color: white;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: var(--shadow-primary);
-}
+        .btn-action {
+            display: inline-block;
+            padding: 1rem 2rem;
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin: 0 10px;
+        }
 
-.btn-test-drive:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-secondary);
-}
-</style>
+        .btn-test-drive {
+            background: var(--gradient-primary);
+            box-shadow: var(--shadow-primary);
+        }
 
+        .btn-devis {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
 
+        .btn-login {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
 
+        .btn-action:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-secondary);
+            color: white;
+            text-decoration: none;
+        }
+
+        .login-prompt {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+
+        .login-prompt p {
+            margin-bottom: 1rem;
+            font-size: 1.1em;
+            color: #666;
+        }
+        </style>
     </div>
 </div>
-</body>
 <?php include('./views/layout/footer.php'); ?>
 </html>

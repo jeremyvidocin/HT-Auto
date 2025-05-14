@@ -50,6 +50,15 @@ class Car {
         return $row;
     }
 
+    // Nouvelle méthode pour obtenir une voiture par son ID
+    public function getCarById($id) {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     // models/Car.php - Ajoutez cette méthode à votre classe Car existante
 
     public function getFilteredCars($filters = []) {
@@ -182,5 +191,166 @@ class Car {
         $options['mileage_range'] = ['min' => $ranges['min_mileage'], 'max' => $ranges['max_mileage']];
         
         return $options;
+    }
+
+    public function count() {
+        $query = "SELECT COUNT(*) as total FROM " . $this->table_name;
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['total'];
+    }
+
+    public function getAll($page = 1, $limit = 10) {
+        $offset = ($page - 1) * $limit;
+        $query = "SELECT * FROM " . $this->table_name . " ORDER BY id DESC LIMIT :limit OFFSET :offset";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function create($data) {
+        try {
+            $query = "INSERT INTO " . $this->table_name . "
+                    (brand, model, year, price, mileage, fuel_type, transmission, power, description, image)
+                    VALUES
+                    (:brand, :model, :year, :price, :mileage, :fuel_type, :transmission, :power, :description, :image)";
+
+            $stmt = $this->conn->prepare($query);
+
+            // Liaison des valeurs
+            $stmt->bindParam(":brand", $data['brand']);
+            $stmt->bindParam(":model", $data['model']);
+            $stmt->bindParam(":year", $data['year']);
+            $stmt->bindParam(":price", $data['price']);
+            $stmt->bindParam(":mileage", $data['mileage']);
+            $stmt->bindParam(":fuel_type", $data['fuel_type']);
+            $stmt->bindParam(":transmission", $data['transmission']);
+            $stmt->bindParam(":power", $data['power']);
+            $stmt->bindParam(":description", $data['description']);
+            $stmt->bindParam(":image", $data['image']);
+
+            // Exécution de la requête
+            $result = $stmt->execute();
+            
+            if (!$result) {
+                error_log("Erreur SQL: " . implode(" ", $stmt->errorInfo()));
+            }
+            
+            return $result;
+        } catch(PDOException $e) {
+            error_log("Exception PDO lors de la création du véhicule: " . $e->getMessage());
+            return false;
+        } catch(Exception $e) {
+            error_log("Exception lors de la création du véhicule: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getLastInsertId() {
+        return $this->conn->lastInsertId();
+    }
+
+    public function addImage($carId, $imagePath) {
+        $query = "INSERT INTO car_images (car_id, image_path) VALUES (:car_id, :image_path)";
+        $stmt = $this->conn->prepare($query);
+        
+        $stmt->bindParam(":car_id", $carId);
+        $stmt->bindParam(":image_path", $imagePath);
+
+        try {
+            return $stmt->execute();
+        } catch(PDOException $e) {
+            return false;
+        }
+    }
+
+    public function getImages($carId) {
+        $query = "SELECT image_path FROM car_images WHERE car_id = :car_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":car_id", $carId);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    public function update($data) {
+        try {
+            $query = "UPDATE " . $this->table_name . " SET 
+                    brand = :brand,
+                    model = :model,
+                    year = :year,
+                    price = :price,
+                    mileage = :mileage,
+                    fuel_type = :fuel_type,
+                    transmission = :transmission,
+                    power = :power,
+                    description = :description" .
+                    ($data['image'] ? ", image = :image" : "") .
+                    " WHERE id = :id";
+
+            $stmt = $this->conn->prepare($query);
+
+            // Liaison des valeurs
+            $stmt->bindParam(":brand", $data['brand']);
+            $stmt->bindParam(":model", $data['model']);
+            $stmt->bindParam(":year", $data['year']);
+            $stmt->bindParam(":price", $data['price']);
+            $stmt->bindParam(":mileage", $data['mileage']);
+            $stmt->bindParam(":fuel_type", $data['fuel_type']);
+            $stmt->bindParam(":transmission", $data['transmission']);
+            $stmt->bindParam(":power", $data['power']);
+            $stmt->bindParam(":description", $data['description']);
+            $stmt->bindParam(":id", $data['id']);
+            
+            if ($data['image']) {
+                $stmt->bindParam(":image", $data['image']);
+            }
+
+            // Exécution de la requête
+            $result = $stmt->execute();
+            
+            if (!$result) {
+                error_log("Erreur SQL lors de la mise à jour: " . implode(" ", $stmt->errorInfo()));
+            }
+            
+            return $result;
+        } catch(PDOException $e) {
+            error_log("Exception PDO lors de la mise à jour du véhicule: " . $e->getMessage());
+            return false;
+        } catch(Exception $e) {
+            error_log("Exception lors de la mise à jour du véhicule: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function delete($id) {
+        try {
+            // D'abord, récupérer l'image du véhicule pour la supprimer
+            $this->id = $id;
+            $car = $this->readOne();
+            
+            // Supprimer le véhicule de la base de données
+            $query = "DELETE FROM " . $this->table_name . " WHERE id = :id";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":id", $id);
+            
+            if ($stmt->execute()) {
+                // Si la suppression est réussie, supprimer l'image associée
+                if ($car && !empty($car['image']) && file_exists($car['image'])) {
+                    unlink($car['image']);
+                }
+                return true;
+            }
+            
+            return false;
+        } catch(PDOException $e) {
+            error_log("Exception PDO lors de la suppression du véhicule: " . $e->getMessage());
+            return false;
+        } catch(Exception $e) {
+            error_log("Exception lors de la suppression du véhicule: " . $e->getMessage());
+            return false;
+        }
     }
 }
